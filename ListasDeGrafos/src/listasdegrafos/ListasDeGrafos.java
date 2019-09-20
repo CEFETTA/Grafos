@@ -36,7 +36,7 @@ public class ListasDeGrafos {
         }
         
         for(int i=0; i<grafo1.getVerticePai().length; i++){
-            System.out.println("Vertice "+ i+ ": "+ grafo1.getVerticePai()[i]);
+            System.out.println("Pai "+ i+ ": "+ grafo1.getVerticePai()[i]);
         }
         
         //GRAFO 2----------------------------------------------------------------------------------------------------------------
@@ -67,6 +67,10 @@ public class ListasDeGrafos {
         grafo2.iniciaBuscaEmProfundidade(0);
         for(int i=0; i<grafo2.getDistanciaProfundidade().length; i++){
             System.out.println("Vertice "+ i+ " "+ grafo2.getDistanciaProfundidade()[i]);
+        }
+        
+        for(int i=0; i<grafo2.getVerticePai().length; i++){
+            System.out.println("Pai "+ i+ ": "+ grafo2.getVerticePai()[i]);
         }
     }
 }

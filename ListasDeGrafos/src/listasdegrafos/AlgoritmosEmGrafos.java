@@ -12,6 +12,18 @@ public class AlgoritmosEmGrafos extends Grafos {
     }
     
     private void buscaProfundidade(int vertice) {        
+        
+        for(int i=0; i<distanciaProfundidade.length; i++){
+            if(super.matrizAdjacencia[vertice][i] != 0 && distanciaProfundidade[i]>=distanciaProfundidade.length){
+                verticePredecessor[i] = vertice;
+                distanciaProfundidade[i] = distanciaProfundidade[vertice] + super.getPeso(vertice, i);
+                buscaProfundidade(i);
+            }
+        }
+        
+    }
+    
+    public void iniciaBuscaEmProfundidade(int vertice) {
         for(int i=0; i<verticePredecessor.length; i++){
             verticePredecessor[i] = -1;
         }
@@ -24,18 +36,7 @@ public class AlgoritmosEmGrafos extends Grafos {
         
         distanciaProfundidade[vertice] = 0;
         
-        for(int i=0; i<distanciaProfundidade.length; i++){
-            if(super.matrizAdjacencia[vertice][i] != 0 && verticePredecessor[i]>distanciaProfundidade.length){
-                verticePredecessor[i] = vertice;
-                distanciaProfundidade[i] = distanciaProfundidade[vertice] + super.getPeso(vertice, i);
-                buscaProfundidade(i);
-            }
-        }
-        
-    }
-    
-    public void iniciaBuscaEmProfundidade(int vertice) {
-         buscaProfundidade(vertice);
+        buscaProfundidade(vertice);
     }
     
     public int[] getDistanciaProfundidade() {

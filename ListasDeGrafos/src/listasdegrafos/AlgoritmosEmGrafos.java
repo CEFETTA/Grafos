@@ -1,5 +1,8 @@
 package listasdegrafos;
 
+import java.util.Comparator;
+import java.util.LinkedList;
+
 public class AlgoritmosEmGrafos extends Grafos {
 
     private final int[] distanciaProfundidade;
@@ -7,6 +10,10 @@ public class AlgoritmosEmGrafos extends Grafos {
     private final int[] verticePredecessorProfundidade;
     private final int[] verticePredecessorLargura;
     private final byte[] cor; // -1 = branco, 0 = cinza, 1= preto
+    private final int[] distanciasCMC;
+    private final int[] verticeAntecessorCMC;
+    private boolean doneCMC;
+    private int lastRoot;
 
     public AlgoritmosEmGrafos(int vertices) {
         super(vertices);
@@ -15,6 +22,9 @@ public class AlgoritmosEmGrafos extends Grafos {
         verticePredecessorProfundidade = new int[vertices];
         verticePredecessorLargura = new int[vertices];
         cor = new byte[distanciaLargura.length]; // -1 = branco, 0 = cinza, 1= preto
+        distanciasCMC = new int[vertices];
+        verticeAntecessorCMC = new int[vertices];
+        doneCMC = false;
     }
 
     private void buscaProfundidade(int vertice) {
@@ -83,6 +93,68 @@ public class AlgoritmosEmGrafos extends Grafos {
         }
     }
 
+    public int iniciaDijkstra(int verticeInicial, int verticeFinal) {
+        if (this.doneCMC == false || verticeInicial != this.lastRoot) {
+            dijkstra(verticeInicial);
+            this.lastRoot = verticeInicial;
+            this.doneCMC = true;
+        }
+        return this.distanciasCMC[verticeFinal];
+    }
+
+    public int[] iniciaDijkstra(int verticeInicial) {
+        if (this.doneCMC == false || verticeInicial != this.lastRoot) {
+            dijkstra(verticeInicial);
+            this.lastRoot = verticeInicial;
+            this.doneCMC = true;
+        }
+        return this.distanciasCMC;
+    }
+
+    private void dijkstra(int verticeInicial) {
+
+        boolean[] done = new boolean[this.numeroVertices];
+
+        for (int i = 0; i < this.numeroVertices; i++) {
+            this.distanciasCMC[i] = Integer.MAX_VALUE; //iniciando como infinito
+            this.verticeAntecessorCMC[i] = -1;        //se terminar com -1, não é alcançável
+            done[i] = false;                         //ainda não foi retirado da fila
+        }
+        this.distanciasCMC[verticeInicial] = 0; //distancia da raiz é 0
+
+        while (!vazio(done)) {
+            int aux = prioridade(done); //retira o menor da fila
+            done[aux] = true;
+            for (int i = 0; i < this.matrizAdjacencia[aux].length; i++) {
+                if (this.distanciasCMC[aux] + matrizAdjacencia[aux][i] < this.distanciasCMC[i]) {
+                    this.distanciasCMC[i] = this.distanciasCMC[aux] + matrizAdjacencia[aux][i];
+                    this.verticeAntecessorCMC[i] = aux;
+                }
+            }
+        }
+    }
+
+    private int prioridade(boolean[] done) {
+        int aux = Integer.MAX_VALUE;
+        int index = -1;
+        for (int i = 0; i < done.length; i++) {
+            if (this.distanciasCMC[i] <= aux && done[i] == false) {
+                aux = this.distanciasCMC[i];
+                index = i;
+            }
+        }
+        return index;
+    }
+
+    private boolean vazio(boolean[] done) {
+        for (int i = 0; i < done.length; i++) {
+            if (done[i] == true) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public int[] getDistanciaProfundidade() {
         return distanciaProfundidade;
     }
@@ -97,6 +169,10 @@ public class AlgoritmosEmGrafos extends Grafos {
 
     public int[] getVerticePredecessorLargura() {
         return verticePredecessorLargura;
+    }
+
+    public int[] getVerticeAntecessorCMC() {
+        return verticeAntecessorCMC;
     }
 
 }
